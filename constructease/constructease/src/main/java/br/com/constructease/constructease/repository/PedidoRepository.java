@@ -1,60 +1,99 @@
 package br.com.constructease.constructease.repository;
 
 import br.com.constructease.constructease.exception.PedidoNaoEncontradoException;
+import br.com.constructease.constructease.exception.PersistenciaPedidoException;
 import br.com.constructease.constructease.model.Pedido;
 import br.com.constructease.constructease.model.StatusPedido;
 import br.com.constructease.constructease.model.factory.PedidoFactory;
 import br.com.constructease.constructease.util.JsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 public class PedidoRepository {
-    private final String caminho = "pedidos.json";
+
+    private static final Logger logger = LoggerFactory.getLogger(PedidoRepository.class);
+    private final String caminho;
+
+    public PedidoRepository(@Value("${pedido.repository.path:pedidos.json}") String caminho) {
+        this.caminho = caminho;
+    }
 
     public List<Pedido> buscarTodos() {
+        File arquivo = new File(caminho);
+        if (!arquivo.exists()) {
+            logger.warn("Arquivo de pedidos não encontrado: {}", caminho);
+            return List.of();
+        }
         return JsonUtil.lerJson(caminho, new TypeReference<List<Pedido>>() {});
     }
 
     public void cancelar(int id) {
         List<Pedido> pedidos = buscarTodos();
-
         Pedido pedido = pedidos.stream()
                 .filter(p -> p.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new PedidoNaoEncontradoException("Pedido com ID " + id + " não encontrado."));
 
         pedido.setStatus(StatusPedido.CANCELADO);
-
-        JsonUtil.gravarJson(caminho, pedidos);
+        gravarPedidos(pedidos);
+        logger.info("Pedido com ID {} foi cancelado.", id);
     }
 
     public synchronized Pedido save(Pedido pedido) {
-        List<Pedido> pedidos = buscarTodos();
-        Pedido resultado;
-
         if (pedido.getId() == null || pedido.getId() <= 0) {
-            resultado = PedidoFactory.criarComNovoId(pedido.getDescricao(), pedidos);
-            resultado.setItens(pedido.getItens()); // se houver itens
-            pedidos.add(resultado);
+            return criarPedido(pedido);
         } else {
-            pedidos.removeIf(p -> p.getId().equals(pedido.getId()));
-            pedidos.add(pedido);
-            resultado = pedido;
+            return atualizarPedido(pedido);
+        }
+    }
+
+    private Pedido criarPedido(Pedido pedido) {
+        List<Pedido> pedidos = buscarTodos();
+        Pedido novoPedido = PedidoFactory.criarPedidoIncrementandoId(pedido.getDescricao(), pedidos);
+        novoPedido.setItens(pedido.getItens());
+        pedidos.add(novoPedido);
+        gravarPedidos(pedidos);
+        logger.info("Novo pedido criado com ID {}.", novoPedido.getId());
+        return novoPedido;
+    }
+
+    private Pedido atualizarPedido(Pedido pedido) {
+        List<Pedido> pedidos = buscarTodos();
+        Optional<Pedido> existente = pedidos.stream()
+                .filter(p -> p.getId().equals(pedido.getId()))
+                .findFirst();
+
+        if (existente.isEmpty()) {
+            throw new PedidoNaoEncontradoException("Pedido com ID " + pedido.getId() + " não encontrado para atualização.");
         }
 
-        JsonUtil.gravarJson(caminho, pedidos);
-        return resultado;
+        pedidos.remove(existente.get());
+        pedidos.add(pedido);
+        gravarPedidos(pedidos);
+        logger.info("Pedido com ID {} foi atualizado.", pedido.getId());
+        return pedido;
+    }
+
+    private void gravarPedidos(List<Pedido> pedidos) {
+        try {
+            JsonUtil.gravarJson(caminho, pedidos);
+        } catch (Exception e) {
+            logger.error("Erro ao gravar pedidos no arquivo: {}", caminho, e);
+            throw new PersistenciaPedidoException("Falha ao gravar pedidos no arquivo.", e);
+        }
     }
 
     public Optional<Pedido> findOptionalById(Long id) {
-        List<Pedido> pedidos = buscarTodos();
-        return pedidos.stream()
+        return buscarTodos().stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst();
     }
-
 }

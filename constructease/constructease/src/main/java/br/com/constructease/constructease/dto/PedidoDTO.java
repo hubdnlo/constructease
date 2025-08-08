@@ -1,4 +1,5 @@
 package br.com.constructease.constructease.dto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +13,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PedidoDTO {
-    @Valid
+
     @NotNull(message = "A descrição não pode ser nula")
     @Size(min = 5, max = 100, message = "A descrição deve ter entre 5 e 100 caracteres")
     private String descricao;

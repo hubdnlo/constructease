@@ -29,10 +29,12 @@ class ProdutoCadastroDTOTest {
         dto.setDescricao("Cimento de alta resistência para construção civil.");
         dto.setPreco(BigDecimal.valueOf(29.90).doubleValue());
         dto.setCategoriaId(1);
+        dto.setQuantidade(1);
 
         Set<ConstraintViolation<ProdutoCadastroDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
+
 
     @Test
     void nomeEmBranco_deveFalharValidacao() {

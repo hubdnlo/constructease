@@ -22,7 +22,15 @@ public class PedidoService implements IPedidoService {
     @Autowired
     private EstoqueService estoqueService;
 
+    public PedidoService(PedidoRepository pedidoRepository, EstoqueService estoqueService) {
+        this.pedidoRepository = pedidoRepository;
+        this.estoqueService = estoqueService;
+    }
+
+
     public Pedido criarPedido(PedidoDTO dto) {
+        validarPedidoDTO(dto);
+
         Pedido pedido = new Pedido(dto.getDescricao());
         pedido.setStatus(StatusPedido.ATIVO);
 
@@ -35,12 +43,16 @@ public class PedidoService implements IPedidoService {
         }
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
-
-        // Exibe o valor total após salvar
         double valorTotal = calcularTotalPedido(pedidoSalvo);
-        System.out.printf("Pedido criado | ID: %d | Valor Total: R$ %.2f%n", pedidoSalvo.getId(), valorTotal);
 
+        System.out.printf("Pedido criado | ID: %d | Valor Total: R$ %.2f%n", pedidoSalvo.getId(), valorTotal);
         return pedidoSalvo;
+    }
+
+    private void validarPedidoDTO(PedidoDTO dto) {
+        if (dto == null || dto.getItens() == null || dto.getItens().isEmpty()) {
+            throw new IllegalArgumentException("Pedido inválido: deve conter itens.");
+        }
     }
 
     public double calcularTotalPedido(Pedido pedido) {
@@ -52,9 +64,11 @@ public class PedidoService implements IPedidoService {
 
     public void cancelarPedido(Long id) {
         Pedido pedido = buscarPedidoObrigatorio(id);
+
         if (!pedido.getStatus().equals(StatusPedido.ATIVO)) {
             throw new IllegalStateException("Pedido não pode ser cancelado. Status atual: " + pedido.getStatus());
         }
+
         pedido.setStatus(StatusPedido.CANCELADO);
         pedidoRepository.save(pedido);
     }
