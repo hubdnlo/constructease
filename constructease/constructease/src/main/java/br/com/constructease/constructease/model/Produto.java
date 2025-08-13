@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+/**
+ * Entidade que representa um produto disponível no sistema.
+ */
 @Data
 @Entity
 @Table(name = "produtos")
@@ -13,7 +16,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @NotBlank(message = "O nome do produto é obrigatório")
     @Column(name = "nome", nullable = false, length = 100)
@@ -27,8 +30,7 @@ public class Produto {
     @Column(name = "preco", nullable = false)
     private double preco;
 
-    // Getters e Setters
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -36,20 +38,12 @@ public class Produto {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
+    public int getQuantidade() {
+        return quantidade;
     }
 
     public double getPreco() {
         return preco;
-    }
-
-    public void setPreco(double preco) {
-        this.preco = preco;
     }
 
     public int getQuantidadeEstoque() {
@@ -60,15 +54,15 @@ public class Produto {
         this.quantidade = quantidadeEstoque;
     }
 
-    @Override
-    public String toString() {
-        return "Produto{id=" + id + ", nome='" + nome + '\'' +
-                ", quantidade=" + quantidade + ", preco=" + preco + '}';
+    public void setPreco(double preco) {
+        this.preco = preco;
     }
 
-    public void setDescricao(String areiaParaAcabamento) {
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public void setCategoriaId(int i) {
+    public void setId(Long novoId) {
+        this.id = novoId;
     }
 }

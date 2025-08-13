@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "nome": "Furadeira",
+    "quantidade": 30,
+    "preco": 199.99000000000004,
+    "quantidadeEstoque": 30
+  },
+  {
+    "id": 2,
+    "nome": "Furadeira 2",
+    "quantidade": 20,
+    "preco": 199.99,
+    "quantidadeEstoque": 20
+  },
+  {
+    "id": 3,
+    "nome": "Furadeira 3",
+    "quantidade": 10,
+    "preco": 199.99,
+    "quantidadeEstoque": 10
+  },
+  {
+    "id": 4,
+    "nome": "Furadeira 4",
+    "quantidade": 10,
+    "preco": 199.99,
+    "quantidadeEstoque": 10
+  }
+]

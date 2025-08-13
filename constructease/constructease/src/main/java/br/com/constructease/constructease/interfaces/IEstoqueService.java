@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface IEstoqueService {
     List<Produto> listarItensDisponiveis();
-    Produto consultarItem(int id);
-    Produto buscarProduto(int produtoId);
-    double getPrecoProduto(int produtoId);
-    boolean isDisponivel(int produtoId, int quantidadeSolicitada);
-    void baixarEstoque(int produtoId, int quantidadeBaixa);
-    void reporEstoque(int produtoId, int quantidadeRepor);
+    Produto consultarItem(Long id);
+    Produto buscarProduto(Long produtoId);
+    double getPrecoProduto(Long produtoId);
+    boolean isDisponivel(Long produtoId, int quantidadeSolicitada);
+    void baixarEstoque(Long produtoId, int quantidadeBaixa);
+    void reporEstoque(Long produtoId, int quantidadeRepor);
     void cadastrarOuAtualizarProduto(ProdutoCadastroDTO dto);
-    void atualizarNomeProduto(int id, String novoNome);
+    void atualizarNomeProduto(Long id, String novoNome);
 }

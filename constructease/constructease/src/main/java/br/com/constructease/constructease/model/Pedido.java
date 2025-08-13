@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "pedidos")
 public class Pedido {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -89,5 +88,49 @@ public class Pedido {
                 ", status=" + status +
                 ", itens=" + itens +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public StatusPedido getStatus() {
+        return status;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = status;
     }
 }

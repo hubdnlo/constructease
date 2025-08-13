@@ -9,10 +9,13 @@ import br.com.constructease.constructease.util.JsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,19 +23,21 @@ import java.util.Optional;
 public class PedidoRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoRepository.class);
-    private final String caminho;
 
-    public PedidoRepository(@Value("${pedido.repository.path:pedidos.json}") String caminho) {
-        this.caminho = caminho;
+    private final Resource pedidoJson;
+
+    @Autowired
+    public PedidoRepository(@Value("${pedido.repository.path}") Resource pedidoJson) {
+        this.pedidoJson = pedidoJson;
     }
 
     public List<Pedido> buscarTodos() {
-        File arquivo = new File(caminho);
-        if (!arquivo.exists()) {
-            logger.warn("Arquivo de pedidos não encontrado: {}", caminho);
+        try (InputStream input = pedidoJson.getInputStream()) {
+            return JsonUtil.lerJson(input, new TypeReference<List<Pedido>>() {});
+        } catch (IOException e) {
+            logger.warn("Erro ao ler arquivo de pedidos: {}", pedidoJson.getFilename(), e);
             return List.of();
         }
-        return JsonUtil.lerJson(caminho, new TypeReference<List<Pedido>>() {});
     }
 
     public void cancelar(int id) {
@@ -84,9 +89,10 @@ public class PedidoRepository {
 
     private void gravarPedidos(List<Pedido> pedidos) {
         try {
-            JsonUtil.gravarJson(caminho, pedidos);
-        } catch (Exception e) {
-            logger.error("Erro ao gravar pedidos no arquivo: {}", caminho, e);
+            String caminhoFisico = pedidoJson.getFile().getPath();
+            JsonUtil.gravarJson(caminhoFisico, pedidos);
+        } catch (IOException e) {
+            logger.error("Erro ao gravar pedidos no arquivo: {}", pedidoJson.getFilename(), e);
             throw new PersistenciaPedidoException("Falha ao gravar pedidos no arquivo.", e);
         }
     }

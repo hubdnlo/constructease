@@ -1,5 +1,6 @@
 package br.com.constructease.constructease.dto;
 
+import br.com.constructease.constructease.model.Produto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -10,5 +11,8 @@ public class ProdutoDTO {
     private Double preco;
     private String descricao;
     private Integer categoriaId;
+
+    public ProdutoDTO(Produto produto) {
+    }
 }
 

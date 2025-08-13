@@ -29,4 +29,14 @@ public class PedidoDTO {
     public String toString() {
         return "PedidoDTO{descricao='" + descricao + "', itens=" + itens + '}';
     }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public List<ItemPedidoDTO> getItens() {
+        return itens;
+    }
+
+
 }

@@ -21,7 +21,7 @@ public class ItemPedido {
 
     @NotNull(message = "O ID do produto é obrigatório")
     @Positive(message = "O ID do produto deve ser positivo")
-    private int produtoId;
+    private Long produtoId;
 
     @NotNull(message = "A quantidade é obrigatória")
     @Positive(message = "A quantidade deve ser positiva")
@@ -39,7 +39,7 @@ public class ItemPedido {
 
     protected ItemPedido() {}
 
-    public ItemPedido(int produtoId, int quantidade, double precoUnitario) {
+    public ItemPedido(Long produtoId, int quantidade, double precoUnitario) {
         this.produtoId = produtoId;
         this.quantidade = quantidade;
         this.precoUnitario = precoUnitario;
@@ -58,5 +58,19 @@ public class ItemPedido {
         return getClass().hashCode();
     }
 
+    public Integer getQuantidade() {
+        return quantidade;
+    }
 
+    public Double getPrecoUnitario() {
+        return precoUnitario;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
+    public Long getProdutoId() {
+        return produtoId;
+    }
 }

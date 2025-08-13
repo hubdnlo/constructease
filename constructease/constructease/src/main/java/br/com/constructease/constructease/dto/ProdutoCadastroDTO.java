@@ -39,4 +39,25 @@ public class ProdutoCadastroDTO {
     public void setCategoriaId(Integer categoriaId) {
         this.categoriaId = categoriaId;
     }
+
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public Integer getCategoriaId() {
+        return categoriaId;
+    }
 }

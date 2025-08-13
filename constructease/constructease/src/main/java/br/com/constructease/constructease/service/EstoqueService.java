@@ -6,8 +6,9 @@ import br.com.constructease.constructease.exception.PersistenciaEstoqueException
 import br.com.constructease.constructease.exception.ProdutoInexistenteException;
 import br.com.constructease.constructease.interfaces.IEstoqueService;
 import br.com.constructease.constructease.model.Produto;
+import br.com.constructease.constructease.model.factory.ProdutoFactory;
 import br.com.constructease.constructease.repository.EstoqueRepository;
-import br.com.constructease.constructease.repository.PedidoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +30,16 @@ public class EstoqueService implements IEstoqueService {
                 .toList();
     }
 
-    public Produto consultarItem(int id) {
+    public Produto consultarItem(Long id) {
         return buscarProduto(id);
     }
 
-    public Produto buscarProduto(int produtoId) {
+    public Produto buscarProduto(Long produtoId) {
         return estoqueRepository.buscarPorId(produtoId)
                 .orElseThrow(() -> new ProdutoInexistenteException("Produto não encontrado: ID " + produtoId));
     }
 
-    public double getPrecoProduto(int produtoId) {
+    public double getPrecoProduto(Long produtoId) {
         Produto produto = buscarProduto(produtoId);
         if (produto.getQuantidadeEstoque() == 0) {
             throw new EstoqueInsuficienteException("Produto sem estoque disponível");
@@ -46,12 +47,13 @@ public class EstoqueService implements IEstoqueService {
         return produto.getPreco();
     }
 
-    public boolean isDisponivel(int produtoId, int quantidadeSolicitada) {
+    public boolean isDisponivel(Long produtoId, int quantidadeSolicitada) {
         Produto produto = buscarProduto(produtoId);
         return produto.getQuantidadeEstoque() >= quantidadeSolicitada;
     }
 
-    public void baixarEstoque(int produtoId, int quantidadeBaixa) {
+    @Transactional
+    public void baixarEstoque(Long produtoId, int quantidadeBaixa) {
         Produto produto = buscarProduto(produtoId);
         if (produto.getQuantidadeEstoque() < quantidadeBaixa) {
             throw new EstoqueInsuficienteException("Estoque insuficiente para o produto ID " + produtoId);
@@ -60,12 +62,14 @@ public class EstoqueService implements IEstoqueService {
         gravarProduto(produto);
     }
 
-    public void reporEstoque(int produtoId, int quantidadeRepor) {
+    @Transactional
+    public void reporEstoque(Long produtoId, int quantidadeRepor) {
         Produto produto = buscarProduto(produtoId);
         produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + quantidadeRepor);
         gravarProduto(produto);
     }
 
+    @Transactional
     public void cadastrarOuAtualizarProduto(ProdutoCadastroDTO dto) {
         if (dto.getPreco() <= 0 || dto.getQuantidade() < 0) {
             throw new IllegalArgumentException("Dados inválidos para cadastro ou atualização.");
@@ -99,16 +103,13 @@ public class EstoqueService implements IEstoqueService {
     }
 
     private void cadastrarNovoProduto(ProdutoCadastroDTO dto, List<Produto> produtos) {
-        Produto novo = new Produto();
-        novo.setNome(dto.getNome());
-        novo.setQuantidadeEstoque(dto.getQuantidade());
-        novo.setPreco(dto.getPreco());
-
+        Produto novo = ProdutoFactory.criar(dto, produtos); // dto + lista
         produtos.add(novo);
         gravarEstoque(produtos);
     }
 
-    public void atualizarNomeProduto(int id, String novoNome) {
+    @Transactional
+    public void atualizarNomeProduto(Long id, String novoNome) {
         Produto produto = buscarProduto(id);
         produto.setNome(novoNome);
         gravarProduto(produto);

@@ -17,7 +17,20 @@ public class JsonUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Lê um JSON genérico de um caminho e o converte para o tipo especificado.
+     * Lê um JSON genérico a partir de um InputStream.
+     */
+    public static <T> T lerJson(InputStream input, TypeReference<T> type) {
+        try {
+            logger.info("Lendo JSON via InputStream");
+            return mapper.readValue(input, type);
+        } catch (IOException e) {
+            logger.error("Erro ao ler JSON via InputStream", e);
+            throw new JsonLeituraException("Erro ao ler JSON via InputStream", e);
+        }
+    }
+
+    /**
+     * Lê um JSON genérico a partir de um caminho.
      */
     public static <T> T lerJson(String caminho, TypeReference<T> type) {
         try (InputStream is = abrirArquivo(caminho)) {
