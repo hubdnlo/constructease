@@ -50,10 +50,16 @@ public class PedidoController {
 
     @GetMapping
     @Operation(summary = "Lista todos os pedidos ativos")
-    public ResponseEntity<List<Pedido>> listar() {
+    public ResponseEntity<List<PedidoResponseDTO>> listar() {
         logger.debug("Recebida requisição para listar todos os pedidos");
+
         List<Pedido> pedidos = pedidoService.listarTodos();
-        logger.info("Total de pedidos retornados: {}", pedidos.size());
-        return ResponseEntity.ok(pedidos);
+
+        List<PedidoResponseDTO> resposta = pedidos.stream()
+                .map(pedido -> new PedidoResponseDTO(pedido, pedidoService.calcularTotalPedido(pedido)))
+                .toList();
+
+        logger.info("Total de pedidos retornados: {}", resposta.size());
+        return ResponseEntity.ok(resposta);
     }
 }

@@ -1,6 +1,8 @@
 package br.com.constructease.constructease.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -20,15 +22,23 @@ public class ItemPedidoDTO {
     private final Double precoUnitario;
     private final Double subtotal;
 
-    // Construtor para entrada (requisição)
-    public ItemPedidoDTO(Long produtoId, int quantidade) {
+    /**
+     * Construtor usado para deserialização de requisições JSON.
+     */
+    @JsonCreator
+    public ItemPedidoDTO(
+            @JsonProperty("produtoId") Long produtoId,
+            @JsonProperty("quantidade") int quantidade
+    ) {
         this.produtoId = produtoId;
         this.quantidade = quantidade;
         this.precoUnitario = null;
         this.subtotal = null;
     }
 
-    // Construtor para resposta (retorno)
+    /**
+     * Construtor usado para montar a resposta com preço e subtotal.
+     */
     public ItemPedidoDTO(Long produtoId, int quantidade, Double precoUnitario) {
         this.produtoId = produtoId;
         this.quantidade = quantidade;

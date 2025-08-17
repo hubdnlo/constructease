@@ -4,12 +4,15 @@ import br.com.constructease.constructease.model.ItemPedido;
 import br.com.constructease.constructease.model.Pedido;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "id", "descricao", "status", "itens", "valorTotal" })
 public class PedidoResponseDTO {
 
     private final Long id;

@@ -1,6 +1,7 @@
 package br.com.constructease.constructease.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class ItemPedido {
     private Double precoUnitario;
 
     // Relacionamento com Pedido
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;

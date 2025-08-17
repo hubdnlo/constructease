@@ -2,13 +2,17 @@ package br.com.constructease.constructease.util;
 
 import br.com.constructease.constructease.exception.JsonGravacaoException;
 import br.com.constructease.constructease.exception.JsonLeituraException;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonUtil {
@@ -16,9 +20,13 @@ public class JsonUtil {
     private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    /**
-     * Lê um JSON genérico a partir de um InputStream.
-     */
+    static {
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
+
     public static <T> T lerJson(InputStream input, TypeReference<T> type) {
         try {
             logger.info("Lendo JSON via InputStream");
@@ -29,9 +37,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Lê um JSON genérico a partir de um caminho.
-     */
     public static <T> T lerJson(String caminho, TypeReference<T> type) {
         try (InputStream is = abrirArquivo(caminho)) {
             logger.info("Lendo JSON de {}", caminho);
@@ -42,9 +47,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Grava uma lista genérica como JSON no caminho especificado.
-     */
     public static <T> void gravarJson(String caminho, List<T> lista) {
         try {
             Path path = Paths.get(caminho);
@@ -57,9 +59,6 @@ public class JsonUtil {
         }
     }
 
-    /**
-     * Lê uma lista de objetos de um JSON.
-     */
     public static <T> List<T> lerLista(String caminho, Class<T[]> clazz) {
         try (InputStream input = abrirArquivo(caminho)) {
             logger.info("Lendo lista JSON de {}", caminho);
@@ -67,13 +66,10 @@ public class JsonUtil {
             return List.of(array);
         } catch (IOException e) {
             logger.error("Erro ao ler lista JSON de {}", caminho, e);
-            throw new JsonLeituraException("Erro ao ler lista JSON: " + caminho, e);
+            return new ArrayList<>(); // ✅ Retorna lista vazia em vez de lançar exceção
         }
     }
 
-    /**
-     * Abre um arquivo JSON de forma segura, seja por caminho absoluto ou classpath.
-     */
     private static InputStream abrirArquivo(String caminho) throws IOException {
         File file = new File(caminho);
         if (file.exists()) {
@@ -86,9 +82,6 @@ public class JsonUtil {
         return is;
     }
 
-    /**
-     * Cria diretório pai se necessário.
-     */
     private static void criarDiretorioSeNecessario(Path path) throws IOException {
         Path parent = path.getParent();
         if (parent != null && !Files.exists(parent)) {

@@ -8,18 +8,24 @@ import br.com.constructease.constructease.exception.PedidoNaoEncontradoException
 import br.com.constructease.constructease.model.ItemPedido;
 import br.com.constructease.constructease.model.Pedido;
 import br.com.constructease.constructease.repository.PedidoRepository;
+import br.com.constructease.constructease.util.JsonUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PedidoService implements IPedidoService {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoService.class);
+    private static final String CAMINHO_JSON = "data/pedidos.json";
 
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -53,8 +59,32 @@ public class PedidoService implements IPedidoService {
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
         double valorTotal = calcularTotalPedido(pedidoSalvo);
+        pedidoSalvo.setValorTotal(valorTotal); // Persistindo valorTotal
 
         logger.info("Pedido criado com sucesso | ID: {} | Valor Total: R$ {}", pedidoSalvo.getId(), valorTotal);
+
+        // Persistência no arquivo JSON com validação segura
+        try {
+            List<Pedido> pedidosExistentes = JsonUtil.lerLista(CAMINHO_JSON, Pedido[].class);
+            logger.debug("Total de pedidos existentes antes da gravação: {}", pedidosExistentes.size());
+
+            pedidosExistentes.add(pedidoSalvo);
+
+            String caminhoTemp = "data/pedidos_temp.json";
+            JsonUtil.gravarJson(caminhoTemp, pedidosExistentes);
+
+            // Validação do arquivo temporário antes de mover
+            List<Pedido> validacao = JsonUtil.lerLista(caminhoTemp, Pedido[].class);
+            if (!validacao.isEmpty()) {
+                Files.move(Paths.get(caminhoTemp), Paths.get(CAMINHO_JSON), StandardCopyOption.REPLACE_EXISTING);
+                logger.info("Pedido gravado com sucesso no arquivo JSON");
+            } else {
+                logger.error("Arquivo temporário está vazio após gravação. Não será movido.");
+            }
+        } catch (Exception e) {
+            logger.warn("Pedido foi criado e salvo no banco, mas ocorreu um erro ao gravar no JSON", e);
+        }
+
         return pedidoSalvo;
     }
 
@@ -67,6 +97,12 @@ public class PedidoService implements IPedidoService {
         if (!pedido.getStatus().equals(StatusPedido.ATIVO)) {
             logger.error("Cancelamento inválido | ID: {} | Status atual: {}", id, pedido.getStatus());
             throw new IllegalStateException("Pedido não pode ser cancelado. Status atual: " + pedido.getStatus());
+        }
+
+        // ✅ Devolução ao estoque
+        for (ItemPedido item : pedido.getItens()) {
+            estoqueService.devolverEstoque(item.getProdutoId(), item.getQuantidade());
+            logger.info("Produto devolvido ao estoque | Produto ID: {} | Quantidade: {}", item.getProdutoId(), item.getQuantidade());
         }
 
         pedido.setStatus(StatusPedido.CANCELADO);

@@ -1,6 +1,8 @@
 package br.com.constructease.constructease.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,7 +15,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "pedidos")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Pedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,16 +26,21 @@ public class Pedido {
     @Size(max = 100)
     private String descricao;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataCriacao;
 
     private boolean ativo;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusPedido status;
+
+    // ✅ Campo que será persistido no JSON
+    private Double valorTotal;
 
     protected Pedido() {}
 
@@ -72,42 +81,10 @@ public class Pedido {
         }
     }
 
-    public double getValorTotal() {
+    public double calcularValorTotal() {
         return itens.stream()
                 .mapToDouble(i -> i.getPrecoUnitario() * i.getQuantidade())
                 .sum();
-    }
-
-    @Override
-    public String toString() {
-        return "Pedido{" +
-                "id=" + id +
-                ", descricao='" + descricao + '\'' +
-                ", dataCriacao=" + dataCriacao +
-                ", ativo=" + ativo +
-                ", status=" + status +
-                ", itens=" + itens +
-                '}';
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public List<ItemPedido> getItens() {
-        return itens;
     }
 
     public StatusPedido getStatus() {
@@ -132,5 +109,9 @@ public class Pedido {
 
     public void setStatus(StatusPedido status) {
         this.status = status;
+    }
+
+    public void setValorTotal(Double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 }

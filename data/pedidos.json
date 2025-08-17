@@ -1,1 +1,121 @@
-[]
+[ {
+  "id" : 3,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-16 19:27:35",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 3,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 2,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 1,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-16 19:14:42",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 2,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-16 19:15:46",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 4,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-16 20:06:02",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 3,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 2,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 5,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-16 21:43:55",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 3,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 2,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 6,
+  "descricao" : "Pedido de materiais 3",
+  "dataCriacao" : "2025-08-16 21:44:04",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 3,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 2,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 7,
+  "descricao" : "Pedido de materiais 3",
+  "dataCriacao" : "2025-08-16 21:46:10",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 3,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 2,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 8,
+  "descricao" : "Pedido de materiais 4",
+  "dataCriacao" : "2025-08-16 21:47:14",
+  "ativo" : true,
+  "itens" : [ {
+    "produtoId" : 4,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 199.99
+  } ],
+  "status" : "CANCELADO"
+} ]

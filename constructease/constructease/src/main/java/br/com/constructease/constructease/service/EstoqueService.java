@@ -69,6 +69,17 @@ public class EstoqueService implements IEstoqueService {
         gravarProduto(produto);
     }
 
+    /**
+     * Método específico para devolução de estoque em caso de cancelamento de pedido.
+     * Funcionalmente igual ao reporEstoque, mas com semântica voltada para reversão.
+     */
+    @Transactional
+    public void devolverEstoque(Long produtoId, int quantidadeDevolvida) {
+        Produto produto = buscarProduto(produtoId);
+        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + quantidadeDevolvida);
+        gravarProduto(produto);
+    }
+
     @Transactional
     public void cadastrarOuAtualizarProduto(ProdutoCadastroDTO dto) {
         if (dto.getPreco() <= 0 || dto.getQuantidade() < 0) {
@@ -103,7 +114,7 @@ public class EstoqueService implements IEstoqueService {
     }
 
     private void cadastrarNovoProduto(ProdutoCadastroDTO dto, List<Produto> produtos) {
-        Produto novo = ProdutoFactory.criar(dto, produtos); // dto + lista
+        Produto novo = ProdutoFactory.criar(dto, produtos);
         produtos.add(novo);
         gravarEstoque(produtos);
     }
