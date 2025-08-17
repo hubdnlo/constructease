@@ -29,8 +29,6 @@ public class Pedido {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataCriacao;
 
-    private boolean ativo;
-
     @JsonManagedReference
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens = new ArrayList<>();
@@ -39,7 +37,6 @@ public class Pedido {
     @Column(nullable = false)
     private StatusPedido status;
 
-    // ✅ Campo que será persistido no JSON
     private Double valorTotal;
 
     protected Pedido() {}
@@ -47,7 +44,6 @@ public class Pedido {
     public Pedido(String descricao) {
         this.descricao = descricao;
         this.dataCriacao = LocalDateTime.now();
-        this.ativo = true;
         this.status = StatusPedido.ATIVO;
     }
 
@@ -55,7 +51,6 @@ public class Pedido {
         this.id = id;
         this.descricao = descricao;
         this.dataCriacao = LocalDateTime.now();
-        this.ativo = true;
         this.status = StatusPedido.ATIVO;
     }
 
@@ -63,7 +58,6 @@ public class Pedido {
         this.id = id;
         this.descricao = descricao;
         this.dataCriacao = LocalDateTime.now();
-        this.ativo = true;
         this.status = StatusPedido.ATIVO;
         setItens(itens);
     }
@@ -101,10 +95,6 @@ public class Pedido {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
     }
 
     public void setStatus(StatusPedido status) {

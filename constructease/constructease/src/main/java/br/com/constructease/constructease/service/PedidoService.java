@@ -2,18 +2,20 @@ package br.com.constructease.constructease.service;
 
 import br.com.constructease.constructease.dto.ItemPedidoDTO;
 import br.com.constructease.constructease.dto.PedidoDTO;
-import br.com.constructease.constructease.interfaces.IPedidoService;
-import br.com.constructease.constructease.model.StatusPedido;
+import br.com.constructease.constructease.dto.PedidoResponseDTO;
 import br.com.constructease.constructease.exception.PedidoNaoEncontradoException;
+import br.com.constructease.constructease.interfaces.IPedidoService;
 import br.com.constructease.constructease.model.ItemPedido;
 import br.com.constructease.constructease.model.Pedido;
+import br.com.constructease.constructease.model.StatusPedido;
 import br.com.constructease.constructease.repository.PedidoRepository;
+import br.com.constructease.constructease.util.FormatadorDecimal;
 import br.com.constructease.constructease.util.JsonUtil;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -43,13 +45,13 @@ public class PedidoService implements IPedidoService {
         logger.debug("Iniciando criação de pedido: {}", dto);
         validarPedidoDTO(dto);
 
+        validarEstoqueDosItens(dto.getItens());
+
         Pedido pedido = new Pedido(dto.getDescricao());
         pedido.setStatus(StatusPedido.ATIVO);
 
         for (ItemPedidoDTO itemDTO : dto.getItens()) {
             double precoUnitario = estoqueService.getPrecoProduto(itemDTO.getProdutoId());
-            estoqueService.baixarEstoque(itemDTO.getProdutoId(), itemDTO.getQuantidade());
-
             ItemPedido item = new ItemPedido(itemDTO.getProdutoId(), itemDTO.getQuantidade(), precoUnitario);
             pedido.adicionarItem(item);
 
@@ -59,21 +61,31 @@ public class PedidoService implements IPedidoService {
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
         double valorTotal = calcularTotalPedido(pedidoSalvo);
-        pedidoSalvo.setValorTotal(valorTotal); // Persistindo valorTotal
+        pedidoSalvo.setValorTotal(valorTotal);
+
+        for (ItemPedido item : pedidoSalvo.getItens()) {
+            estoqueService.baixarEstoque(item.getProdutoId(), item.getQuantidade());
+        }
 
         logger.info("Pedido criado com sucesso | ID: {} | Valor Total: R$ {}", pedidoSalvo.getId(), valorTotal);
 
-        // Persistência no arquivo JSON com validação segura
         try {
-            List<Pedido> pedidosExistentes = JsonUtil.lerLista(CAMINHO_JSON, Pedido[].class);
+            List<Pedido> pedidosExistentes = new ArrayList<>(JsonUtil.lerLista(CAMINHO_JSON, Pedido[].class));
             logger.debug("Total de pedidos existentes antes da gravação: {}", pedidosExistentes.size());
 
-            pedidosExistentes.add(pedidoSalvo);
+            boolean jaExiste = pedidosExistentes.stream()
+                    .anyMatch(p -> p.getId().equals(pedidoSalvo.getId()));
+
+            if (!jaExiste) {
+                pedidosExistentes.add(pedidoSalvo);
+                logger.debug("Pedido ID {} adicionado à lista para gravação", pedidoSalvo.getId());
+            } else {
+                logger.warn("Pedido ID {} já existe na lista. Não será adicionado novamente.", pedidoSalvo.getId());
+            }
 
             String caminhoTemp = "data/pedidos_temp.json";
             JsonUtil.gravarJson(caminhoTemp, pedidosExistentes);
 
-            // Validação do arquivo temporário antes de mover
             List<Pedido> validacao = JsonUtil.lerLista(caminhoTemp, Pedido[].class);
             if (!validacao.isEmpty()) {
                 Files.move(Paths.get(caminhoTemp), Paths.get(CAMINHO_JSON), StandardCopyOption.REPLACE_EXISTING);
@@ -88,6 +100,15 @@ public class PedidoService implements IPedidoService {
         return pedidoSalvo;
     }
 
+    private void validarEstoqueDosItens(List<ItemPedidoDTO> itens) {
+        for (ItemPedidoDTO item : itens) {
+            if (!estoqueService.isDisponivel(item.getProdutoId(), item.getQuantidade())) {
+                logger.error("Estoque insuficiente | Produto ID: {} | Quantidade solicitada: {}", item.getProdutoId(), item.getQuantidade());
+                throw new IllegalArgumentException("Produto ID " + item.getProdutoId() + " sem estoque suficiente.");
+            }
+        }
+    }
+
     @Transactional
     public void cancelarPedido(Long id) {
         logger.warn("Tentando cancelar pedido | ID: {}", id);
@@ -99,7 +120,6 @@ public class PedidoService implements IPedidoService {
             throw new IllegalStateException("Pedido não pode ser cancelado. Status atual: " + pedido.getStatus());
         }
 
-        // ✅ Devolução ao estoque
         for (ItemPedido item : pedido.getItens()) {
             estoqueService.devolverEstoque(item.getProdutoId(), item.getQuantidade());
             logger.info("Produto devolvido ao estoque | Produto ID: {} | Quantidade: {}", item.getProdutoId(), item.getQuantidade());
@@ -117,8 +137,9 @@ public class PedidoService implements IPedidoService {
                         .mapToDouble(item -> item.getPrecoUnitario() * item.getQuantidade())
                         .sum();
 
-        logger.debug("Total calculado para pedido ID {}: R$ {}", pedido.getId(), total);
-        return total;
+        double totalArredondado = FormatadorDecimal.arredondar(total);
+        logger.debug("Total calculado para pedido ID {}: R$ {}", pedido.getId(), totalArredondado);
+        return totalArredondado;
     }
 
     public List<Pedido> listarTodos() {
@@ -141,5 +162,10 @@ public class PedidoService implements IPedidoService {
             logger.error("Pedido inválido: DTO nulo ou sem itens");
             throw new IllegalArgumentException("Pedido inválido: deve conter itens.");
         }
+    }
+
+    public PedidoResponseDTO gerarPedidoResponseDTO(Pedido pedido) {
+        double valorTotal = calcularTotalPedido(pedido);
+        return new PedidoResponseDTO(pedido, valorTotal, estoqueService);
     }
 }

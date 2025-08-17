@@ -30,10 +30,9 @@ public class PedidoController {
         logger.info("Recebida requisição para criar pedido: {}", dto);
 
         Pedido pedido = pedidoService.criarPedido(dto);
-        double total = pedidoService.calcularTotalPedido(pedido);
-        PedidoResponseDTO resposta = new PedidoResponseDTO(pedido, total);
+        PedidoResponseDTO resposta = pedidoService.gerarPedidoResponseDTO(pedido); //usando método centralizado
 
-        logger.info("Pedido criado com sucesso | ID: {} | Total: R$ {}", pedido.getId(), total);
+        logger.info("Pedido criado com sucesso | ID: {} | Total: R$ {}", pedido.getId(), resposta.getValorTotal());
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
@@ -56,7 +55,7 @@ public class PedidoController {
         List<Pedido> pedidos = pedidoService.listarTodos();
 
         List<PedidoResponseDTO> resposta = pedidos.stream()
-                .map(pedido -> new PedidoResponseDTO(pedido, pedidoService.calcularTotalPedido(pedido)))
+                .map(pedidoService::gerarPedidoResponseDTO) // usando método centralizado
                 .toList();
 
         logger.info("Total de pedidos retornados: {}", resposta.size());

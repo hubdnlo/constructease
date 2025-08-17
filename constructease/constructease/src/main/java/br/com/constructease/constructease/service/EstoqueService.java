@@ -7,7 +7,8 @@ import br.com.constructease.constructease.exception.ProdutoInexistenteException;
 import br.com.constructease.constructease.interfaces.IEstoqueService;
 import br.com.constructease.constructease.model.Produto;
 import br.com.constructease.constructease.model.factory.ProdutoFactory;
-import br.com.constructease.constructease.repository.EstoqueRepository;
+import br.com.constructease.constructease.repository.EstoqueArquivoRepository;
+import br.com.constructease.constructease.util.FormatadorDecimal;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,16 @@ import java.util.List;
 @Service
 public class EstoqueService implements IEstoqueService {
 
-    private final EstoqueRepository estoqueRepository;
+    private final EstoqueArquivoRepository estoqueArquivoRepository;
 
     @Autowired
-    public EstoqueService(EstoqueRepository estoqueRepository) {
-        this.estoqueRepository = estoqueRepository;
+    public EstoqueService(EstoqueArquivoRepository estoqueArquivoRepository) {
+        this.estoqueArquivoRepository = estoqueArquivoRepository;
     }
 
     public List<Produto> listarItensDisponiveis() {
-        return estoqueRepository.buscarTodos().stream()
-                .filter(produto -> produto.getQuantidadeEstoque() > 0)
+        return estoqueArquivoRepository.buscarTodos().stream()
+                .filter(produto -> produto.getQuantidade() > 0)
                 .toList();
     }
 
@@ -35,48 +36,49 @@ public class EstoqueService implements IEstoqueService {
     }
 
     public Produto buscarProduto(Long produtoId) {
-        return estoqueRepository.buscarPorId(produtoId)
+        return estoqueArquivoRepository.buscarPorId(produtoId)
                 .orElseThrow(() -> new ProdutoInexistenteException("Produto não encontrado: ID " + produtoId));
     }
 
     public double getPrecoProduto(Long produtoId) {
         Produto produto = buscarProduto(produtoId);
-        if (produto.getQuantidadeEstoque() == 0) {
+        if (produto.getQuantidade() == 0) {
             throw new EstoqueInsuficienteException("Produto sem estoque disponível");
         }
-        return produto.getPreco();
+        return FormatadorDecimal.arredondar(produto.getPreco());
+    }
+
+    public String getNomeProduto(Long produtoId) {
+        Produto produto = buscarProduto(produtoId);
+        return produto.getNome();
     }
 
     public boolean isDisponivel(Long produtoId, int quantidadeSolicitada) {
         Produto produto = buscarProduto(produtoId);
-        return produto.getQuantidadeEstoque() >= quantidadeSolicitada;
+        return produto.getQuantidade() >= quantidadeSolicitada;
     }
 
     @Transactional
     public void baixarEstoque(Long produtoId, int quantidadeBaixa) {
         Produto produto = buscarProduto(produtoId);
-        if (produto.getQuantidadeEstoque() < quantidadeBaixa) {
+        if (produto.getQuantidade() < quantidadeBaixa) {
             throw new EstoqueInsuficienteException("Estoque insuficiente para o produto ID " + produtoId);
         }
-        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidadeBaixa);
+        produto.setQuantidade(produto.getQuantidade() - quantidadeBaixa);
         gravarProduto(produto);
     }
 
     @Transactional
     public void reporEstoque(Long produtoId, int quantidadeRepor) {
         Produto produto = buscarProduto(produtoId);
-        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + quantidadeRepor);
+        produto.setQuantidade(produto.getQuantidade() + quantidadeRepor);
         gravarProduto(produto);
     }
 
-    /**
-     * Método específico para devolução de estoque em caso de cancelamento de pedido.
-     * Funcionalmente igual ao reporEstoque, mas com semântica voltada para reversão.
-     */
     @Transactional
     public void devolverEstoque(Long produtoId, int quantidadeDevolvida) {
         Produto produto = buscarProduto(produtoId);
-        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + quantidadeDevolvida);
+        produto.setQuantidade(produto.getQuantidade() + quantidadeDevolvida);
         gravarProduto(produto);
     }
 
@@ -86,9 +88,12 @@ public class EstoqueService implements IEstoqueService {
             throw new IllegalArgumentException("Dados inválidos para cadastro ou atualização.");
         }
 
-        List<Produto> produtos = estoqueRepository.buscarTodos();
+        List<Produto> produtos = estoqueArquivoRepository.buscarTodos();
+
         Produto existente = produtos.stream()
-                .filter(p -> p.getNome().equalsIgnoreCase(dto.getNome()))
+                .filter(p -> p.getNome().equalsIgnoreCase(dto.getNome()) &&
+                        p.getDescricao().equalsIgnoreCase(dto.getDescricao()) &&
+                        p.getCategoriaId().equals(dto.getCategoriaId()))
                 .findFirst()
                 .orElse(null);
 
@@ -100,21 +105,23 @@ public class EstoqueService implements IEstoqueService {
     }
 
     private void atualizarProdutoExistente(Produto existente, ProdutoCadastroDTO dto) {
-        int qtdAtual = existente.getQuantidadeEstoque();
+        int qtdAtual = existente.getQuantidade();
         int novaQtd = dto.getQuantidade();
         double precoAtual = existente.getPreco();
         double novoPreco = dto.getPreco();
 
         double precoPonderado = (precoAtual * qtdAtual + novoPreco * novaQtd) / (qtdAtual + novaQtd);
+        double precoFinal = FormatadorDecimal.arredondar(precoPonderado);
 
-        existente.setQuantidadeEstoque(qtdAtual + novaQtd);
-        existente.setPreco(precoPonderado);
+        existente.setQuantidade(qtdAtual + novaQtd);
+        existente.setPreco(precoFinal);
 
         gravarProduto(existente);
     }
 
     private void cadastrarNovoProduto(ProdutoCadastroDTO dto, List<Produto> produtos) {
         Produto novo = ProdutoFactory.criar(dto, produtos);
+        novo.setPreco(FormatadorDecimal.arredondar(novo.getPreco()));
         produtos.add(novo);
         gravarEstoque(produtos);
     }
@@ -128,7 +135,7 @@ public class EstoqueService implements IEstoqueService {
 
     private void gravarProduto(Produto produto) {
         try {
-            estoqueRepository.atualizarProduto(produto);
+            estoqueArquivoRepository.atualizarProduto(produto);
         } catch (Exception e) {
             throw new PersistenciaEstoqueException("Erro ao atualizar produto no estoque.", e);
         }
@@ -136,7 +143,7 @@ public class EstoqueService implements IEstoqueService {
 
     private void gravarEstoque(List<Produto> produtos) {
         try {
-            estoqueRepository.atualizarEstoque(produtos);
+            estoqueArquivoRepository.atualizarEstoque(produtos);
         } catch (Exception e) {
             throw new PersistenciaEstoqueException("Erro ao atualizar lista de produtos no estoque.", e);
         }

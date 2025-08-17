@@ -7,21 +7,21 @@ import br.com.constructease.constructease.util.FormatadorDecimal;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProdutoDTO {
+public class ProdutoResponseDTO {
 
-    private Integer id;
+    private Long id;
     private String nome;
-    private Integer quantidade;
-    private Double preco;
     private String descricao;
+    private int quantidade;
+    private double preco;
     private Integer categoriaId;
 
-    public ProdutoDTO(Produto produto) {
-        this.id = produto.getId() != null ? produto.getId().intValue() : null;
+    public ProdutoResponseDTO(Produto produto) {
+        this.id = produto.getId();
         this.nome = produto.getNome();
+        this.descricao = produto.getDescricao();
         this.quantidade = produto.getQuantidade();
         this.preco = FormatadorDecimal.arredondar(produto.getPreco());
-        this.descricao = null;
-        this.categoriaId = null;
+        this.categoriaId = produto.getCategoriaId();
     }
 }

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JsonUtil {
@@ -63,10 +64,10 @@ public class JsonUtil {
         try (InputStream input = abrirArquivo(caminho)) {
             logger.info("Lendo lista JSON de {}", caminho);
             T[] array = mapper.readValue(input, clazz);
-            return List.of(array);
+            return new ArrayList<>(Arrays.asList(array)); //lista mutável
         } catch (IOException e) {
             logger.error("Erro ao ler lista JSON de {}", caminho, e);
-            return new ArrayList<>(); // ✅ Retorna lista vazia em vez de lançar exceção
+            return new ArrayList<>();
         }
     }
 

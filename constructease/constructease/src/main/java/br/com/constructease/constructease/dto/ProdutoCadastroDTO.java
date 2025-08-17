@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import br.com.constructease.constructease.util.FormatadorDecimal;
 
 @Data
 @NoArgsConstructor
@@ -17,19 +18,23 @@ public class ProdutoCadastroDTO {
 
     @NotBlank(message = "O nome do produto é obrigatório")
     private String nome;
+
     @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
+
     @Positive(message = "A quantidade deve ser maior que zero")
     private int quantidade;
+
     @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero")
     private double preco;
+
     @NotNull(message = "A categoria é obrigatória")
     private Integer categoriaId;
 
     public ProdutoCadastroDTO(String nome, int quantidade, double preco) {
         this.nome = nome;
         this.quantidade = quantidade;
-        this.preco = preco;
+        this.preco = FormatadorDecimal.arredondar(preco);
     }
 
     public void setDescricao(String descricao) {
@@ -40,24 +45,7 @@ public class ProdutoCadastroDTO {
         this.categoriaId = categoriaId;
     }
 
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
     public double getPreco() {
-        return preco;
-    }
-
-    public Integer getCategoriaId() {
-        return categoriaId;
+        return FormatadorDecimal.arredondar(preco);
     }
 }

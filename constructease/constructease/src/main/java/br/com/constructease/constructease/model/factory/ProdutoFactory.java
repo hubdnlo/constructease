@@ -3,7 +3,6 @@ package br.com.constructease.constructease.model.factory;
 import br.com.constructease.constructease.dto.ProdutoCadastroDTO;
 import br.com.constructease.constructease.model.Produto;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,8 +23,10 @@ public class ProdutoFactory {
         Produto produto = new Produto();
         produto.setId(novoId);
         produto.setNome(dto.getNome());
+        produto.setDescricao(dto.getDescricao());
+        produto.setCategoriaId(dto.getCategoriaId());
         produto.setPreco(dto.getPreco());
-        produto.setQuantidadeEstoque(dto.getQuantidade());
+        produto.setQuantidade(dto.getQuantidade());
 
         return produto;
     }

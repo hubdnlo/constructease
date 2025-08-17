@@ -2,7 +2,7 @@ package br.com.constructease.constructease.controller;
 
 import br.com.constructease.constructease.dto.AtualizarNomeDTO;
 import br.com.constructease.constructease.dto.ProdutoCadastroDTO;
-import br.com.constructease.constructease.dto.ProdutoDTO;
+import br.com.constructease.constructease.dto.ProdutoResponseDTO;
 import br.com.constructease.constructease.model.Produto;
 import br.com.constructease.constructease.service.EstoqueService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,16 +37,18 @@ public class EstoqueController {
 
     @GetMapping
     @Operation(summary = "Listar itens disponíveis no estoque")
-    public ResponseEntity<List<ProdutoDTO>> listarItensDisponiveis() {
+    public ResponseEntity<List<ProdutoResponseDTO>> listarItensDisponiveis() {
         List<Produto> produtos = estoqueService.listarItensDisponiveis();
-        List<ProdutoDTO> dtos = produtos.stream().map(ProdutoDTO::new).collect(Collectors.toList());
+        List<ProdutoResponseDTO> dtos = produtos.stream()
+                .map(ProdutoResponseDTO::new)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar um item no estoque")
-    public ResponseEntity<ProdutoDTO> consultarItem(@PathVariable Long id) {
+    public ResponseEntity<ProdutoResponseDTO> consultarItem(@PathVariable Long id) {
         Produto produto = estoqueService.consultarItem(id);
-        return ResponseEntity.ok(new ProdutoDTO(produto));
+        return ResponseEntity.ok(new ProdutoResponseDTO(produto));
     }
 }

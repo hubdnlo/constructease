@@ -2,6 +2,7 @@ package br.com.constructease.constructease.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -22,6 +23,14 @@ public class Produto {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
+    @NotBlank(message = "A descrição do produto é obrigatória")
+    @Column(name = "descricao", nullable = false, length = 255)
+    private String descricao;
+
+    @NotNull(message = "A categoria do produto é obrigatória")
+    @Column(name = "categoria_id", nullable = false)
+    private Integer categoriaId;
+
     @Positive(message = "A quantidade deve ser positiva")
     @Column(name = "quantidade", nullable = false)
     private int quantidade;
@@ -30,39 +39,15 @@ public class Produto {
     @Column(name = "preco", nullable = false)
     private double preco;
 
-    public Long getId() {
-        return id;
+    public Produto() {
+        // Construtor protegido para JPA
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public double getPreco() {
-        return preco;
-    }
-
-    public int getQuantidadeEstoque() {
-        return quantidade;
-    }
-
-    public void setQuantidadeEstoque(int quantidadeEstoque) {
-        this.quantidade = quantidadeEstoque;
-    }
-
-    public void setPreco(double preco) {
-        this.preco = preco;
-    }
-
-    public void setNome(String nome) {
+    public Produto(String nome, String descricao, Integer categoriaId, int quantidade, double preco) {
         this.nome = nome;
-    }
-
-    public void setId(Long novoId) {
-        this.id = novoId;
+        this.descricao = descricao;
+        this.categoriaId = categoriaId;
+        this.quantidade = quantidade;
+        this.preco = preco;
     }
 }
