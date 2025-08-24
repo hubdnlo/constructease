@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -40,7 +41,7 @@ public class EstoqueService implements IEstoqueService {
                 .orElseThrow(() -> new ProdutoInexistenteException("Produto não encontrado: ID " + produtoId));
     }
 
-    public double getPrecoProduto(Long produtoId) {
+    public BigDecimal getPrecoProduto(Long produtoId) {
         Produto produto = buscarProduto(produtoId);
         if (produto.getQuantidade() == 0) {
             throw new EstoqueInsuficienteException("Produto sem estoque disponível");
@@ -84,7 +85,7 @@ public class EstoqueService implements IEstoqueService {
 
     @Transactional
     public void cadastrarOuAtualizarProduto(ProdutoCadastroDTO dto) {
-        if (dto.getPreco() <= 0 || dto.getQuantidade() < 0) {
+        if (dto.getPreco().compareTo(BigDecimal.ZERO) <= 0 || dto.getQuantidade() < 0) {
             throw new IllegalArgumentException("Dados inválidos para cadastro ou atualização.");
         }
 
@@ -107,14 +108,16 @@ public class EstoqueService implements IEstoqueService {
     private void atualizarProdutoExistente(Produto existente, ProdutoCadastroDTO dto) {
         int qtdAtual = existente.getQuantidade();
         int novaQtd = dto.getQuantidade();
-        double precoAtual = existente.getPreco();
-        double novoPreco = dto.getPreco();
+        BigDecimal precoAtual = existente.getPreco();
+        BigDecimal novoPreco = dto.getPreco();
 
-        double precoPonderado = (precoAtual * qtdAtual + novoPreco * novaQtd) / (qtdAtual + novaQtd);
-        double precoFinal = FormatadorDecimal.arredondar(precoPonderado);
+        BigDecimal totalAtual = precoAtual.multiply(BigDecimal.valueOf(qtdAtual));
+        BigDecimal totalNovo = novoPreco.multiply(BigDecimal.valueOf(novaQtd));
+        BigDecimal precoPonderado = totalAtual.add(totalNovo)
+                .divide(BigDecimal.valueOf(qtdAtual + novaQtd), 2, BigDecimal.ROUND_HALF_UP);
 
         existente.setQuantidade(qtdAtual + novaQtd);
-        existente.setPreco(precoFinal);
+        existente.setPreco(FormatadorDecimal.arredondar(precoPonderado));
 
         gravarProduto(existente);
     }

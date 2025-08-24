@@ -5,10 +5,13 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import br.com.constructease.constructease.util.FormatadorDecimal;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -22,30 +25,22 @@ public class ProdutoCadastroDTO {
     @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
 
-    @Positive(message = "A quantidade deve ser maior que zero")
+    @Min(value = 1, message = "A quantidade deve ser maior que zero")
     private int quantidade;
 
-    @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero")
-    private double preco;
+    @NotNull(message = "O preço é obrigatório.")
+    @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero.")
+    private BigDecimal preco;
 
-    @NotNull(message = "A categoria é obrigatória")
+    @NotNull(message = "O id da categoria é obrigatório")
     private Integer categoriaId;
 
-    public ProdutoCadastroDTO(String nome, int quantidade, double preco) {
-        this.nome = nome;
-        this.quantidade = quantidade;
-        this.preco = FormatadorDecimal.arredondar(preco);
-    }
+//    public ProdutoCadastroDTO(String nome, String descricao, int quantidade, BigDecimal preco, Integer categoriaId) {
+//        this.nome = nome;
+//        this.descricao = descricao;
+//        this.quantidade = quantidade;
+//        this.preco = FormatadorDecimal.arredondar(preco);
+//        this.categoriaId = categoriaId;
+//    }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public void setCategoriaId(Integer categoriaId) {
-        this.categoriaId = categoriaId;
-    }
-
-    public double getPreco() {
-        return FormatadorDecimal.arredondar(preco);
-    }
 }

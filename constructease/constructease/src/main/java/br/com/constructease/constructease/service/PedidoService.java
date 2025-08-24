@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -44,14 +45,13 @@ public class PedidoService implements IPedidoService {
     public Pedido criarPedido(PedidoDTO dto) {
         logger.debug("Iniciando criação de pedido: {}", dto);
         validarPedidoDTO(dto);
-
         validarEstoqueDosItens(dto.getItens());
 
         Pedido pedido = new Pedido(dto.getDescricao());
         pedido.setStatus(StatusPedido.ATIVO);
 
         for (ItemPedidoDTO itemDTO : dto.getItens()) {
-            double precoUnitario = estoqueService.getPrecoProduto(itemDTO.getProdutoId());
+            BigDecimal precoUnitario = estoqueService.getPrecoProduto(itemDTO.getProdutoId());
             ItemPedido item = new ItemPedido(itemDTO.getProdutoId(), itemDTO.getQuantidade(), precoUnitario);
             pedido.adicionarItem(item);
 
@@ -60,7 +60,7 @@ public class PedidoService implements IPedidoService {
         }
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
-        double valorTotal = calcularTotalPedido(pedidoSalvo);
+        BigDecimal valorTotal = calcularTotalPedido(pedidoSalvo);
         pedidoSalvo.setValorTotal(valorTotal);
 
         for (ItemPedido item : pedidoSalvo.getItens()) {
@@ -131,13 +131,13 @@ public class PedidoService implements IPedidoService {
         logger.info("Pedido cancelado com sucesso | ID: {}", id);
     }
 
-    public double calcularTotalPedido(Pedido pedido) {
-        double total = pedido.getItens() == null ? 0.0 :
+    public BigDecimal calcularTotalPedido(Pedido pedido) {
+        BigDecimal total = pedido.getItens() == null ? BigDecimal.ZERO :
                 pedido.getItens().stream()
-                        .mapToDouble(item -> item.getPrecoUnitario() * item.getQuantidade())
-                        .sum();
+                        .map(item -> item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        double totalArredondado = FormatadorDecimal.arredondar(total);
+        BigDecimal totalArredondado = FormatadorDecimal.arredondar(total);
         logger.debug("Total calculado para pedido ID {}: R$ {}", pedido.getId(), totalArredondado);
         return totalArredondado;
     }
@@ -145,6 +145,20 @@ public class PedidoService implements IPedidoService {
     public List<Pedido> listarTodos() {
         logger.debug("Listando todos os pedidos");
         return pedidoRepository.buscarTodos();
+    }
+
+    public List<Pedido> listarPedidosAtivos() {
+        logger.debug("Listando apenas pedidos com status ATIVO");
+        return pedidoRepository.buscarTodos().stream()
+                .filter(p -> p.getStatus() == StatusPedido.ATIVO)
+                .toList();
+    }
+
+    public List<Pedido> listarPorStatus(StatusPedido status) {
+        logger.debug("Listando pedidos com status: {}", status);
+        return pedidoRepository.buscarTodos().stream()
+                .filter(p -> p.getStatus() == status)
+                .toList();
     }
 
     public Pedido buscarPedidoObrigatorio(Long id) {
@@ -165,7 +179,7 @@ public class PedidoService implements IPedidoService {
     }
 
     public PedidoResponseDTO gerarPedidoResponseDTO(Pedido pedido) {
-        double valorTotal = calcularTotalPedido(pedido);
+        BigDecimal valorTotal = calcularTotalPedido(pedido);
         return new PedidoResponseDTO(pedido, valorTotal, estoqueService);
     }
 }

@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import br.com.constructease.constructease.util.FormatadorDecimal;
 
+import java.math.BigDecimal;
+
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemPedidoDTO {
@@ -20,15 +22,15 @@ public class ItemPedidoDTO {
 
     @NotNull(message = "A quantidade é obrigatória")
     @Min(value = 1, message = "A quantidade mínima é 1")
-    private final int quantidade;
+    private final Integer quantidade;
 
-    private final Double precoUnitario;
-    private final Double subtotal;
+    private final BigDecimal precoUnitario;
+    private final BigDecimal subtotal;
 
     @JsonCreator
     public ItemPedidoDTO(
             @JsonProperty("produtoId") Long produtoId,
-            @JsonProperty("quantidade") int quantidade
+            @JsonProperty("quantidade") Integer quantidade
     ) {
         this.produtoId = produtoId;
         this.nomeProduto = null;
@@ -37,12 +39,18 @@ public class ItemPedidoDTO {
         this.subtotal = null;
     }
 
-    public ItemPedidoDTO(Long produtoId, String nomeProduto, int quantidade, Double precoUnitario) {
+    public ItemPedidoDTO(Long produtoId, String nomeProduto, Integer quantidade, BigDecimal precoUnitario) {
         this.produtoId = produtoId;
         this.nomeProduto = nomeProduto;
         this.quantidade = quantidade;
-        this.precoUnitario = precoUnitario != null ? FormatadorDecimal.arredondar(precoUnitario) : null;
-        this.subtotal = (precoUnitario != null) ? FormatadorDecimal.arredondar(precoUnitario * quantidade) : null;
+
+        if (precoUnitario != null) {
+            this.precoUnitario = FormatadorDecimal.arredondar(precoUnitario);
+            this.subtotal = FormatadorDecimal.arredondar(precoUnitario.multiply(BigDecimal.valueOf(quantidade)));
+        } else {
+            this.precoUnitario = null;
+            this.subtotal = null;
+        }
     }
 
     @Override

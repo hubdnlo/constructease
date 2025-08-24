@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * Entidade que representa um produto disponível no sistema.
  */
@@ -37,13 +39,13 @@ public class Produto {
 
     @Positive(message = "O preço deve ser positivo")
     @Column(name = "preco", nullable = false)
-    private double preco;
+    private BigDecimal preco;
 
     public Produto() {
         // Construtor protegido para JPA
     }
 
-    public Produto(String nome, String descricao, Integer categoriaId, int quantidade, double preco) {
+    public Produto(String nome, String descricao, Integer categoriaId, int quantidade, BigDecimal preco) {
         this.nome = nome;
         this.descricao = descricao;
         this.categoriaId = categoriaId;

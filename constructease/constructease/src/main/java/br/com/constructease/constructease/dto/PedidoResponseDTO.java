@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,10 +20,10 @@ public class PedidoResponseDTO {
     private final Long id;
     private final String descricao;
     private final String status;
-    private final double valorTotal;
+    private final BigDecimal valorTotal;
     private final List<ItemPedidoDTO> itens;
 
-    public PedidoResponseDTO(Pedido pedido, double valorTotal, EstoqueService estoqueService) {
+    public PedidoResponseDTO(Pedido pedido, BigDecimal valorTotal, EstoqueService estoqueService) {
         this.id = pedido.getId();
         this.descricao = pedido.getDescricao();
         this.status = pedido.getStatus().name();
@@ -38,7 +39,8 @@ public class PedidoResponseDTO {
                         item.getProdutoId(),
                         estoqueService.getNomeProduto(item.getProdutoId()),
                         item.getQuantidade(),
-                        item.getPrecoUnitario()))
+                        item.getPrecoUnitario()
+                ))
                 .collect(Collectors.toList());
     }
 }

@@ -2,10 +2,14 @@ package br.com.constructease.constructease.dto;
 
 import br.com.constructease.constructease.model.Produto;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import br.com.constructease.constructease.util.FormatadorDecimal;
 
+import java.math.BigDecimal;
+
 @Data
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProdutoResponseDTO {
 
@@ -13,7 +17,7 @@ public class ProdutoResponseDTO {
     private String nome;
     private String descricao;
     private int quantidade;
-    private double preco;
+    private BigDecimal preco;
     private Integer categoriaId;
 
     public ProdutoResponseDTO(Produto produto) {

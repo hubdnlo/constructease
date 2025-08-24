@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Pedido {
     @Column(nullable = false)
     private StatusPedido status;
 
-    private Double valorTotal;
+    private BigDecimal valorTotal;
 
     protected Pedido() {}
 
@@ -75,33 +76,9 @@ public class Pedido {
         }
     }
 
-    public double calcularValorTotal() {
+    public BigDecimal calcularValorTotal() {
         return itens.stream()
-                .mapToDouble(i -> i.getPrecoUnitario() * i.getQuantidade())
-                .sum();
-    }
-
-    public StatusPedido getStatus() {
-        return status;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
-    public void setStatus(StatusPedido status) {
-        this.status = status;
-    }
-
-    public void setValorTotal(Double valorTotal) {
-        this.valorTotal = valorTotal;
+                .map(item -> item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -1,4 +1,32 @@
 [ {
+  "id" : 1,
+  "descricao" : "Pedido de materiais 2",
+  "dataCriacao" : "2025-08-17 17:10:20",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 3,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-19 21:47:25",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 3,
+    "quantidade" : 1,
+    "precoUnitario" : 299.99
+  } ],
+  "status" : "CANCELADO"
+}, {
   "id" : 2,
   "descricao" : "Pedido de materiais 2",
   "dataCriacao" : "2025-08-17 17:10:48",
@@ -11,19 +39,155 @@
     "quantidade" : 5,
     "precoUnitario" : 299.99
   } ],
-  "status" : "ATIVO"
+  "status" : "CANCELADO"
 }, {
-  "id" : 1,
-  "descricao" : "Pedido de materiais 2",
-  "dataCriacao" : "2025-08-17 17:10:20",
+  "id" : 4,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-19 21:50:02",
   "itens" : [ {
     "produtoId" : 1,
     "quantidade" : 1,
     "precoUnitario" : 99.99
   }, {
+    "produtoId" : 3,
+    "quantidade" : 1,
+    "precoUnitario" : 299.99
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 5,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-19 22:15:12",
+  "itens" : [ {
     "produtoId" : 1,
     "quantidade" : 1,
     "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 4,
+    "quantidade" : 5,
+    "precoUnitario" : 249.9
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 6,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-23 19:53:53",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 4,
+    "quantidade" : 5,
+    "precoUnitario" : 249.9
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 7,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-23 22:59:34",
+  "itens" : [ {
+    "produtoId" : 6,
+    "quantidade" : 1,
+    "precoUnitario" : 4.9
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.9
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 8,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-23 23:01:55",
+  "itens" : [ {
+    "produtoId" : 6,
+    "quantidade" : 1,
+    "precoUnitario" : 4.9
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 9,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-23 23:03:18",
+  "itens" : [ {
+    "produtoId" : 6,
+    "quantidade" : 1,
+    "precoUnitario" : 4.9
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.9
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 10,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 00:26:21",
+  "itens" : [ {
+    "produtoId" : 6,
+    "quantidade" : 1,
+    "precoUnitario" : 4.90
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.90
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 11,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 00:30:11",
+  "itens" : [ {
+    "produtoId" : 6,
+    "quantidade" : 68,
+    "precoUnitario" : 4.90
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.90
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 12,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 00:32:16",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.90
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 13,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 00:32:36",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.90
+  } ],
+  "status" : "ATIVO"
+}, {
+  "id" : 14,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 00:33:29",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 1,
+    "precoUnitario" : 99.99
+  }, {
+    "produtoId" : 5,
+    "quantidade" : 1,
+    "precoUnitario" : 249.90
   } ],
   "status" : "CANCELADO"
 } ]
