@@ -40,4 +40,25 @@
   "categoriaId" : 2,
   "quantidade" : 0,
   "preco" : 4.90
+}, {
+  "id" : 7,
+  "nome" : "Tijolo",
+  "descricao" : "Tijolo baiano",
+  "categoriaId" : 3,
+  "quantidade" : 20,
+  "preco" : 6.15
+}, {
+  "id" : 8,
+  "nome" : "Tijolo baiano P",
+  "descricao" : "Tijolo baiano",
+  "categoriaId" : 4,
+  "quantidade" : 5,
+  "preco" : 7.90
+}, {
+  "id" : 9,
+  "nome" : "Pedra Arenita",
+  "descricao" : "Arenita A",
+  "categoriaId" : 5,
+  "quantidade" : 5,
+  "preco" : 10.90
 } ]

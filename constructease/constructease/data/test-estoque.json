@@ -1,0 +1,8 @@
+[ {
+  "id" : 1,
+  "nome" : "Areia",
+  "descricao" : "Fina",
+  "categoriaId" : 2,
+  "quantidade" : 20,
+  "preco" : 10.00
+} ]

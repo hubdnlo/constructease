@@ -1,0 +1,12 @@
+[ {
+  "id" : 2,
+  "descricao" : "Pedido de areia",
+  "dataCriacao" : "2025-09-02 23:03:19",
+  "itens" : [ {
+    "produtoId" : 2,
+    "quantidade" : 1,
+    "precoUnitario" : 10.00
+  } ],
+  "status" : "ATIVO",
+  "valorTotal" : 10.00
+} ]

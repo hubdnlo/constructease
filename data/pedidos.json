@@ -190,4 +190,32 @@
     "precoUnitario" : 249.90
   } ],
   "status" : "CANCELADO"
+}, {
+  "id" : 15,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-24 20:33:42",
+  "itens" : [ {
+    "produtoId" : 8,
+    "quantidade" : 1,
+    "precoUnitario" : 7.90
+  }, {
+    "produtoId" : 7,
+    "quantidade" : 1,
+    "precoUnitario" : 6.15
+  } ],
+  "status" : "CANCELADO"
+}, {
+  "id" : 16,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-08-30 23:09:39",
+  "itens" : [ {
+    "produtoId" : 9,
+    "quantidade" : 1,
+    "precoUnitario" : 10.90
+  }, {
+    "produtoId" : 8,
+    "quantidade" : 1,
+    "precoUnitario" : 7.90
+  } ],
+  "status" : "CANCELADO"
 } ]

@@ -1,0 +1,11 @@
+[ {
+  "descricao" : "Novo pedido",
+  "dataCriacao" : "2025-08-31 22:56:28",
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 2,
+    "precoUnitario" : 10.00
+  } ],
+  "status" : "ATIVO",
+  "valorTotal" : 20.00
+} ]
