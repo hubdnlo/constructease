@@ -152,6 +152,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>br/com/constructease/constructease/ConstructeaseApplication*</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
         </plugins>
