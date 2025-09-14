@@ -52,7 +52,7 @@ class PedidoControllerIntegrationTest {
         ItemPedidoDTO item = new ItemPedidoDTO(1L, 2);
         PedidoDTO dto = new PedidoDTO("Pedido de teste", List.of(item));
 
-        mockMvc.perform(post("/api/pedidos") // <-- corrigido aqui
+        mockMvc.perform(post("/api/pedidos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -62,7 +62,7 @@ class PedidoControllerIntegrationTest {
     @Test
     @DisplayName("Deve listar pedidos via GET /api/pedidos")
     void listarPedidos() throws Exception {
-        mockMvc.perform(get("/api/pedidos")) // <-- corrigido aqui
+        mockMvc.perform(get("/api/pedidos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }

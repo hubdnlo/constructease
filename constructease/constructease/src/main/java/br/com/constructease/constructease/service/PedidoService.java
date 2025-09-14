@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoService implements IPedidoService {
@@ -180,6 +181,20 @@ public class PedidoService implements IPedidoService {
 
     public PedidoResponseDTO gerarPedidoResponseDTO(Pedido pedido) {
         BigDecimal valorTotal = calcularTotalPedido(pedido);
-        return new PedidoResponseDTO(pedido, valorTotal, estoqueService);
+        List<ItemPedidoDTO> itensDTO = mapearItens(pedido.getItens());
+        return new PedidoResponseDTO(pedido.getId(), pedido.getDescricao(), pedido.getStatus().name(), valorTotal, itensDTO);
+    }
+
+    private List<ItemPedidoDTO> mapearItens(List<ItemPedido> itensPedido) {
+        if (itensPedido == null || itensPedido.isEmpty()) return List.of();
+
+        return itensPedido.stream()
+                .map(item -> new ItemPedidoDTO(
+                        item.getProdutoId(),
+                        estoqueService.getNomeProduto(item.getProdutoId()),
+                        item.getQuantidade(),
+                        item.getPrecoUnitario()
+                ))
+                .collect(Collectors.toList());
     }
 }

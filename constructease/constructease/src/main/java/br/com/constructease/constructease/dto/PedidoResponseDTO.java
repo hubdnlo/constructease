@@ -34,24 +34,11 @@ public class PedidoResponseDTO {
     @Schema(description = "Lista de itens que compõem o pedido")
     private final List<ItemPedidoDTO> itens;
 
-    public PedidoResponseDTO(Pedido pedido, BigDecimal valorTotal, EstoqueService estoqueService) {
-        this.id = pedido.getId();
-        this.descricao = pedido.getDescricao();
-        this.status = pedido.getStatus().name();
-        this.valorTotal = FormatadorDecimal.arredondar(valorTotal);
-        this.itens = mapearItens(pedido.getItens(), estoqueService);
-    }
-
-    private List<ItemPedidoDTO> mapearItens(List<ItemPedido> itensPedido, EstoqueService estoqueService) {
-        if (itensPedido == null || itensPedido.isEmpty()) return List.of();
-
-        return itensPedido.stream()
-                .map(item -> new ItemPedidoDTO(
-                        item.getProdutoId(),
-                        estoqueService.getNomeProduto(item.getProdutoId()),
-                        item.getQuantidade(),
-                        item.getPrecoUnitario()
-                ))
-                .collect(Collectors.toList());
+    public PedidoResponseDTO(Long id, String descricao, String status, BigDecimal valorTotal, List<ItemPedidoDTO> itens) {
+        this.id = id;
+        this.descricao = descricao;
+        this.status = status;
+        this.valorTotal = valorTotal;
+        this.itens = itens;
     }
 }

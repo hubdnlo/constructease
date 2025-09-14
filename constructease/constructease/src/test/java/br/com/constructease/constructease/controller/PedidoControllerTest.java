@@ -1,5 +1,6 @@
 package br.com.constructease.constructease.controller;
 
+import br.com.constructease.constructease.dto.ItemPedidoDTO;
 import br.com.constructease.constructease.dto.PedidoDTO;
 import br.com.constructease.constructease.dto.PedidoResponseDTO;
 import br.com.constructease.constructease.model.Pedido;
@@ -36,11 +37,19 @@ class PedidoControllerTest {
     void setup() {
         MockitoAnnotations.openMocks(this);
 
-        // Usa construtor público válido
         pedido = new Pedido(1L, "Pedido de teste", new ArrayList<>());
 
-        // Usa construtor válido com mocks
-        responseDTO = new PedidoResponseDTO(pedido, new BigDecimal("100.00"), estoqueService);
+        List<ItemPedidoDTO> itensDTO = List.of(
+                new ItemPedidoDTO(1L, "Cimento", 2, new BigDecimal("50.00"))
+        );
+
+        responseDTO = new PedidoResponseDTO(
+                pedido.getId(),
+                pedido.getDescricao(),
+                pedido.getStatus().name(),
+                new BigDecimal("100.00"),
+                itensDTO
+        );
     }
 
     @Test

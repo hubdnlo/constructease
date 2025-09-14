@@ -61,4 +61,11 @@
   "categoriaId" : 5,
   "quantidade" : 5,
   "preco" : 10.90
+}, {
+  "id" : 10,
+  "nome" : "Arenito grosso",
+  "descricao" : "Arenita A",
+  "categoriaId" : 5,
+  "quantidade" : 10,
+  "preco" : 10.90
 } ]

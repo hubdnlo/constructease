@@ -222,7 +222,7 @@ class PedidoServiceTest {
         when(estoqueService.getPrecoProduto(1L)).thenReturn(new BigDecimal("10.00"));
         when(pedidoRepository.save(any())).thenAnswer(inv -> {
             Pedido p = inv.getArgument(0);
-            p.setId(1L); // mesmo ID do pedido existente
+            p.setId(1L);
             return p;
         });
 

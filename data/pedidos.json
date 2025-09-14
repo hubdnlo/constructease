@@ -218,4 +218,18 @@
     "precoUnitario" : 7.90
   } ],
   "status" : "CANCELADO"
+}, {
+  "id" : 17,
+  "descricao" : "Pedido de materiais",
+  "dataCriacao" : "2025-09-13 16:12:12",
+  "itens" : [ {
+    "produtoId" : 9,
+    "quantidade" : 1,
+    "precoUnitario" : 10.90
+  }, {
+    "produtoId" : 10,
+    "quantidade" : 1,
+    "precoUnitario" : 10.90
+  } ],
+  "status" : "CANCELADO"
 } ]

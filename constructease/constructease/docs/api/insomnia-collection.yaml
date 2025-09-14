@@ -1,0 +1,191 @@
+type: collection.insomnia.rest/5.0
+name: Constructease
+meta:
+  id: wrk_286e37146d704783bae6dd61e44227c8
+  created: 1754790290152
+  modified: 1754790290152
+  description: ""
+collection:
+  - url: http://localhost:8080/estoque/10
+    name: 4. Consultar produto
+    meta:
+      id: req_9734283d547d49f79f50abdb68e5afd2
+      created: 1754790299977
+      modified: 1757790697426
+      isPrivate: false
+      description: ""
+      sortKey: -1754790299977
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.4.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/estoque/10/nome
+    name: 2. Atualizar nome produto
+    meta:
+      id: req_f50fd82e9bfe4dbe9c17348079e0650b
+      created: 1754790320563
+      modified: 1757790653248
+      isPrivate: false
+      description: ""
+      sortKey: -1754790320563
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "novoNome": "Arenito grosso "
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/estoque/cadastro
+    name: 1.Cadastrar/Atualizar produto
+    meta:
+      id: req_d8b5b3f764f14a5199901ed5b459d774
+      created: 1754790452125
+      modified: 1756688746676
+      isPrivate: false
+      description: ""
+      sortKey: -1754790452125
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nome": "Arenita",
+          "descricao": "Arenita A",
+          "categoriaId": 5,
+          "quantidade": 5,
+          "preco": 10.90
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/estoque
+    name: 3. Listar estoque
+    meta:
+      id: req_5f0c49584f36480b969b3d8a7dcc91c6
+      created: 1754790657169
+      modified: 1756606110813
+      isPrivate: false
+      description: ""
+      sortKey: -1754790310270
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/pedidos
+    name: 5. Criar pedido
+    meta:
+      id: req_1850a5682c144bf6b4f8e610a969ad7a
+      created: 1754790996994
+      modified: 1757790720565
+      isPrivate: false
+      description: ""
+      sortKey: -1754790299927
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "descricao": "Pedido de materiais",
+          "itens": [
+            {
+              "produtoId": 9,
+              "quantidade": 1
+            },
+            {
+              "produtoId": 10,
+              "quantidade": 1
+            }
+          ]
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/pedidos/17
+    name: 6. Cancelar pedido
+    meta:
+      id: req_23013dca14de479a8509509a9a802b80
+      created: 1754791058005
+      modified: 1757790773791
+      isPrivate: false
+      description: ""
+      sortKey: -1754790299777
+    method: DELETE
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/pedidos?status=ATIVO
+    name: 7. Listar pedidos
+    meta:
+      id: req_53fd3d5cdf1f4fcea08d5704432daa3c
+      created: 1754791221547
+      modified: 1756606244165
+      isPrivate: false
+      description: ""
+      sortKey: -1754790299677
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_428290aeb81d9545b78a3752b1fade8bb506a5c0
+    created: 1754790290168
+    modified: 1754790290168
+environments:
+  name: Base Environment
+  meta:
+    id: env_428290aeb81d9545b78a3752b1fade8bb506a5c0
+    created: 1754790290159
+    modified: 1754790290159
+    isPrivate: false

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@ActiveProfiles("test") // ✅ Usa o application-test.properties
+@ActiveProfiles("test") // Usa o application-test.properties
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Testes de integração para PedidoRepository")
 class PedidoRepositoryIntegrationTest {
