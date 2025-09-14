@@ -1,7 +1,7 @@
 [ {
   "id" : 2,
   "descricao" : "Pedido de areia",
-  "dataCriacao" : "2025-09-13 14:04:13",
+  "dataCriacao" : "2025-09-13 23:11:26",
   "itens" : [ {
     "produtoId" : 2,
     "quantidade" : 1,
@@ -9,14 +9,4 @@
   } ],
   "status" : "ATIVO",
   "valorTotal" : 10.00
-}, {
-  "id" : 3,
-  "descricao" : "Pedido de teste",
-  "dataCriacao" : "2025-09-13 14:04:20",
-  "itens" : [ {
-    "produtoId" : 1,
-    "quantidade" : 2,
-    "precoUnitario" : 10.00
-  } ],
-  "status" : "ATIVO"
 } ]
