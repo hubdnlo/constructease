@@ -68,4 +68,11 @@
   "categoriaId" : 5,
   "quantidade" : 10,
   "preco" : 10.90
+}, {
+  "id" : 11,
+  "nome" : "Lixa madeira",
+  "descricao" : "Grano 10",
+  "categoriaId" : 6,
+  "quantidade" : 14,
+  "preco" : 2.90
 } ]

@@ -1,7 +1,7 @@
 [ {
   "id" : 2,
   "descricao" : "Pedido de areia",
-  "dataCriacao" : "2025-09-13 23:11:26",
+  "dataCriacao" : "2025-09-21 00:02:49",
   "itens" : [ {
     "produtoId" : 2,
     "quantidade" : 1,
