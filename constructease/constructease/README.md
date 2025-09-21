@@ -222,10 +222,8 @@ GET /pedidos?status=ATIVO
 
 ---
 
-Acesse a documentação da API em: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-
 ## 👨‍💻 Autor
 
 **Danilo** — Desenvolvedor e arquiteto do projeto  
 Construindo soluções com visão de produto e engenharia de excelência. 🧱🚀
+
